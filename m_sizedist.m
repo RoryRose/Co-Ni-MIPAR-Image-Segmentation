@@ -1,8 +1,10 @@
+%% Select an image
 [file, path] = uigetfile('.tif','MultiSelect','off');
 cd(path)
 imshow([path,file]);
 
 inf=imfinfo([path,file]);
+%% segment the image
 [realToImageConv,Unit_Real,Unit_Image]=f_getSEMScaleData(file);
 [outputdata,croppedImage]=f_segmentImage(path,file,realToImageConv);
 
@@ -28,7 +30,7 @@ h.BinCounts=areafrac';
 xlabel(strcat('Equivelant Area Diameter',{' ('},Unit_Real,')'))
 ylabel('Area Fraction')
 
-%% Fit to multimodal distribution
+% Fit to multimodal distribution
 numGaussians=2;
 
 [tEstimate,TrialError,NumTrials]=f_FitmultGauss(numGaussians,binCenters,h.BinCounts);
