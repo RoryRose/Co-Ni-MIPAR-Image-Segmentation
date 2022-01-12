@@ -16,4 +16,4 @@ For method 1:
  * Histogram of area fraction is plotted
  * On this Histogram, you will be prompted to give estimates of the mean and standard deviation for the multi-modal gaussian fit. You can give these by interactivley first drawing a point on the mean estimate and a line representing the std estimate as shown below:
 
-![STD estimate](./multiple gaussians estimate example.tif) 
+![STD estimate](./multiple_gauss_example.png) 
