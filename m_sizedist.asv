@@ -1,31 +1,15 @@
 %% Select an image
-use_multiple_images=true;
-if use_multiple_images==true
-    [file, path] = uigetfile('.tif','MultiSelect','on');
-    imshow([path,file{1}]);
-    inf=imfinfo([path,file{1}]);
-else
-    [file, path] = uigetfile('.tif','MultiSelect','off');
-    imshow([path,file]);
-    inf=imfinfo([path,file]);
-end
+[file, path] = uigetfile('.tif','MultiSelect','off');
 cd(path)
+imshow([path,file]);
+
+inf=imfinfo([path,file]);
 %% segment the image
-if use_multiple_images==true
-    T=table;
-    for i=1:length(file)
-        [realToImageConv,Unit_Real,Unit_Image]=f_getSEMScaleData(file{i});
-        [outputdata,croppedImage]=f_segmentImage(path,file{i},realToImageConv);
-        T=[T;outputdata];
-    end
-    outputdata=T;
-else
-    [realToImageConv,Unit_Real,Unit_Image]=f_getSEMScaleData(file{i});
-    [outputdata,croppedImage]=f_segmentImage(path,file{i},realToImageConv);
-end
+
+[realToImageConv,Unit_Real,Unit_Image]=f_getSEMScaleData(file);
+[outputdata,croppedImage]=f_segmentImage(path,file,realToImageConv);
 
 %% plot histogram
-
 outputdata(outputdata.Perimeter<1,:)=[];
 figure()
 h=histogram(outputdata.Equivelant_Area_Diameter);
@@ -48,7 +32,7 @@ xlabel(strcat('Equivelant Area Diameter',{' ('},Unit_Real,')'))
 ylabel('Area Fraction')
 
 % Fit to multimodal distribution
-numGaussians=1;
+numGaussians=2;
 
 [tEstimate,TrialError,NumTrials]=f_FitmultGauss(numGaussians,binCenters,h.BinCounts);
 %% stacked histogram
