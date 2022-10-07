@@ -1,5 +1,7 @@
 %% Select an image
 use_multiple_images=true;
+
+
 if use_multiple_images==true
     [file, path] = uigetfile('.tif','MultiSelect','on');
     imshow([path,file{1}]);
@@ -25,6 +27,10 @@ else
 end
 
 %% plot histogram
+%INPUT ===========================================================
+% Select the number of gaussians you want to fit to your data
+numGaussians=1;
+%===========================================================
 
 outputdata(outputdata.Perimeter<1,:)=[];
 figure()
@@ -47,8 +53,7 @@ h.BinCounts=areafrac';
 xlabel(strcat('Equivelant Area Diameter',{' ('},Unit_Real,')'))
 ylabel('Area Fraction')
 
-% Fit to multimodal distribution
-numGaussians=1;
+
 
 [tEstimate,TrialError,NumTrials]=f_FitmultGauss(numGaussians,binCenters,h.BinCounts);
 %% stacked histogram
