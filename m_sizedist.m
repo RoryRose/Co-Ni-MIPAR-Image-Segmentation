@@ -22,8 +22,8 @@ if use_multiple_images==true
     end
     outputdata=T;
 else
-    [realToImageConv,Unit_Real,Unit_Image]=f_getSEMScaleData(file{i});
-    [outputdata,croppedImage]=f_segmentImage(path,file{i},realToImageConv);
+    [realToImageConv,Unit_Real,Unit_Image]=f_getSEMScaleData(file);
+    [outputdata,croppedImage]=f_segmentImage(path,file,realToImageConv);
 end
 
 %% plot histogram
@@ -36,6 +36,7 @@ outputdata(outputdata.Perimeter<1,:)=[];
 figure()
 h=histogram(outputdata.Equivelant_Area_Diameter);
 binCenters=h.BinEdges + h.BinWidth/2;
+binCounts=h.BinCounts;
 binCenters(end)=[];
 %totalarea=inf.Height*inf.Width.*realToImageConv^2;
 totalarea=size(croppedImage,1).*size(croppedImage,2).*(realToImageConv.^2);
@@ -46,6 +47,7 @@ for i=1:length(h.BinEdges)-1
     range=[h.BinEdges(i),h.BinEdges(i+1)];
     idx=find((outputdata.Equivelant_Area_Diameter>=range(1))...
         &(outputdata.Equivelant_Area_Diameter<=range(2)));
+
     areafrac(i)=sum(((outputdata.Equivelant_Area_Diameter(idx)).^2./4.*pi)./totalarea);
 end
 %h.BinCounts=h.BinCounts.*ctoA;%normalise bin counts by area fraction
@@ -58,8 +60,8 @@ ylabel('Area Fraction')
 [tEstimate,TrialError,NumTrials]=f_FitmultGauss(numGaussians,binCenters,h.BinCounts);
 %% stacked histogram
 figure()
-bar(binCenters,cumsum(h.BinCounts))
+bar(binCenters,cumsum(binCounts))
 xlabel(strcat('Equivelant Area Diameter',{' ('},Unit_Real,')'))
 ylabel('Cumilative Area Fraction')
-%Sanity check
-sum(h.BinCounts)-sum(((outputdata.Equivelant_Area_Diameter(:)).^2./4.*pi)./totalarea)
+%Sanity check (should be zero)
+total_error=sum(BinCounts)-sum(((outputdata.Equivelant_Area_Diameter(:)).^2./4.*pi)./totalarea)
